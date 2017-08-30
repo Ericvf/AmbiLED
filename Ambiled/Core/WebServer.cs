@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Helpers;
+using System.Web.Script.Serialization;
 using System.Windows;
 
 namespace Ambiled.Core
@@ -70,6 +71,8 @@ namespace Ambiled.Core
         [Import]
         public ILogger Logger { get; set; }
 
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
+
         public WebServer()
             : base()
         {
@@ -124,7 +127,8 @@ namespace Ambiled.Core
                     ViewModel.EnableGamma,
                 };
 
-                var json = Json.Encode(currentState);
+
+                var json = serializer.Serialize(currentState);
                 WriteOutput(context, json);
 
             }
@@ -139,74 +143,77 @@ namespace Ambiled.Core
 
         private void HandlePost(HttpListenerContext context)
         {
-            float AsFloat(dynamic value) => (float)(Convert.ToDouble(value) / 100);
-            bool AsBool(dynamic value) => Convert.ToBoolean(value);
+            float AsFloat(object value) => (float)(Convert.ToDouble(value) / 100);
+            bool AsBool(object value) => Convert.ToBoolean(value);
 
             using (var reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding))
             {
                 var body = reader.ReadToEnd();
-                var payload = Json.Decode(body);
 
-                Logger.Add($"Webserver: {payload.id}={payload.value}");
-                switch (payload.id)
+                var payload = serializer.Deserialize<Dictionary<string, object>>(body);
+                var id = payload["id"].ToString();
+                var value = payload["value"];
+
+                Logger.Add($"Webserver: {id}={value}");
+                switch (payload["id"])
                 {
                     case "Usb":
-                        if (payload.value)
+                        if (AsBool(value))
                             ControllerService.Start();
                         else
                             ControllerService.Stop();
                         break;
 
                     case "EnableCrop":
-                        ViewModel.EnableCrop = AsBool(payload.value);
+                        ViewModel.EnableCrop = AsBool(value);
                         break;
 
                     case "EnableAuto3d":
-                        ViewModel.EnableAuto3d = AsBool(payload.value);
+                        ViewModel.EnableAuto3d = AsBool(value);
                         break;
 
                     case "Is3DOff":
-                        ViewModel.Is3DOff = AsBool(payload.value);
+                        ViewModel.Is3DOff = AsBool(value);
                         break;
 
                     case "Is3DSBS":
-                        ViewModel.Is3DSBS = AsBool(payload.value);
+                        ViewModel.Is3DSBS = AsBool(value);
                         break;
 
                     case "Is3DOU":
-                        ViewModel.Is3DOU = AsBool(payload.value);
+                        ViewModel.Is3DOU = AsBool(value);
                         break;
 
                     case "EnablePostprocessing":
-                        ViewModel.EnablePostprocessing = AsBool(payload.value);
+                        ViewModel.EnablePostprocessing = AsBool(value);
                         break;
 
                     case "EnableFixedFPS":
-                        ViewModel.EnableFixedFPS = AsBool(payload.value);
+                        ViewModel.EnableFixedFPS = AsBool(value);
                         break;
 
                     case "EnableSmoothing":
-                        ViewModel.EnableSmoothing = AsBool(payload.value);
+                        ViewModel.EnableSmoothing = AsBool(value);
                         break;
 
                     case "Smoothing":
-                        ViewModel.Smoothing = AsFloat(payload.value);
+                        ViewModel.Smoothing = AsFloat(value);
                         break;
 
                     case "Brightness":
-                        ViewModel.Brightness = AsFloat(payload.value);
+                        ViewModel.Brightness = AsFloat(value);
                         break;
 
                     case "Hue":
-                        ViewModel.Hue = AsFloat(payload.value);
+                        ViewModel.Hue = AsFloat(value);
                         break;
 
                     case "Saturation":
-                        ViewModel.Saturation = AsFloat(payload.value);
+                        ViewModel.Saturation = AsFloat(value);
                         break;
 
                     case "EnableGamma":
-                        ViewModel.EnableGamma = AsBool(payload.value);
+                        ViewModel.EnableGamma = AsBool(value);
                         break;
 
                     default:
