@@ -20,12 +20,5 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 float4 PS(PS_INPUT input) : SV_Target
 {
-	//return tx.Sample(samLinear, input.Tex);
-	float4 r = tx.Sample(samLinear, input.Tex);
-	/*r += tx.Sample(samLinear, input.Tex + float2(0.01, 0.01));
-	r += tx.Sample(samLinear, input.Tex - float2(0.01, 0.01));*/
-	//r += tx.Sample(samLinear, input.Tex + float2(0.1, 0.1));
-	//r += tx.Sample(samLinear, input.Tex - float2(0.1, 0.1));
-
-	return saturate(r );
+	return tx.Sample(samLinear, input.Tex);
 } 
