@@ -16,14 +16,14 @@ namespace Ambiled.Core
         int FPS { get; set; }
         bool IsConnectOnStart { get; }
         bool EnableCapture { get; set; }
-        bool EnableCrop { get; set;  }
+        bool EnableCrop { get; set; }
         bool EnableGamma { get; set; }
 
         ImageSource Image { get; set; }
         bool MonitorOne { get; }
         bool MonitorTwo { get; }
 
-        ObservableCollection<string> ComDevices { get; set;  }
+        ObservableCollection<string> ComDevices { get; set; }
         string ComDevice { get; }
         int BaudRate { get; }
 
@@ -40,7 +40,7 @@ namespace Ambiled.Core
         bool EnablePostprocessing { get; set; }
 
         bool EnableSmoothing { get; set; }
-        float Smoothing { get; set;  }
+        float Smoothing { get; set; }
 
         float RChannel { get; }
         float GChannel { get; }
@@ -841,13 +841,11 @@ namespace Ambiled.Core
                     Indent = true
                 };
 
-                using (var stream = isolatedStorageFile.OpenFile("MainVM.xml", FileMode.Create))
+                var stream = isolatedStorageFile.OpenFile("MainVM.xml", FileMode.Create);
+                var serializer = new XmlSerializer(typeof(MainVM));
+                using (XmlWriter xmlWriter = XmlWriter.Create(stream, xmlWriterSettings))
                 {
-                    var serializer = new XmlSerializer(typeof(MainVM));
-                    using (XmlWriter xmlWriter = XmlWriter.Create(stream, xmlWriterSettings))
-                    {
-                        serializer.Serialize(xmlWriter, this);
-                    }
+                    serializer.Serialize(xmlWriter, this);
                 }
             }
         }

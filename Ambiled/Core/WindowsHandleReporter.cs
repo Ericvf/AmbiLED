@@ -15,13 +15,13 @@ namespace Ambiled.Core
     [Export(typeof(IWindowsHandleReporter))]
     public class WindowsHandleReporter : IWindowsHandleReporter
     {
-        private static class User32
+        private static class SafeNativeMethods
         {
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             public static extern IntPtr GetForegroundWindow();
 
-            [DllImport("user32.dll")]
-            private static extern void GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+            private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
             public static string GetWindowText(IntPtr hWnd)
             {
@@ -53,9 +53,9 @@ namespace Ambiled.Core
         {
             if (ViewModel.EnableAuto3d)
             {
-                var handle = User32.GetForegroundWindow();
+                var handle = SafeNativeMethods.GetForegroundWindow();
 
-                var currentHandleTitle = User32.GetWindowText(handle);
+                var currentHandleTitle = SafeNativeMethods.GetWindowText(handle);
                 if (currentHandleTitle.IndexOf("sbs", StringComparison.OrdinalIgnoreCase) > 0)
                 {
                     Logger.Add("Auto detected SBS 3D");

@@ -7,7 +7,7 @@ namespace Ambiled.Core
 {
     public class FastScreenCaptureService
     {
-        private static class FastScreenCapture
+        private static class SafeNativeMethods
         {
             [DllImport("FastScreenCapture.dll", CallingConvention = CallingConvention.Cdecl)]
             public static extern int Initialize(int outputNum, int width, int height);
@@ -45,7 +45,7 @@ namespace Ambiled.Core
             buffer = null;
             buffer = new byte[width * height * 4];
 
-            FastScreenCapture.Initialize(outputNum, width, height);
+            SafeNativeMethods.Initialize(outputNum, width, height);
 
             captureTaskToken = new CancellationTokenSource();
             captureTask = Task.Run(() => Capture(captureTaskToken.Token), captureTaskToken.Token);
@@ -66,7 +66,7 @@ namespace Ambiled.Core
         {
             while (!captureTaskToken.IsCancellationRequested)
             {
-                FastScreenCapture.CaptureScreen(buffer);
+                SafeNativeMethods.CaptureScreen(buffer);
                 Captured?.Invoke(this, null);
             }
         }
