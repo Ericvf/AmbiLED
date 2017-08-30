@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,7 +31,7 @@ namespace Ambiled.Core
         private FastScreenCaptureService captureService;
         private WriteableBitmap writeableBitmap;
 
-        private const int frameTime = 1000 / 60;
+        private const int FrameTime = 1000 / 60;
         private Stopwatch frameTimer;
 
         private Stopwatch fpsTimer;
@@ -46,13 +45,13 @@ namespace Ambiled.Core
         int screen = 0;
 
         [ImportingConstructor]
-        public CaptureService(IViewModel ViewModel)
+        public CaptureService(IViewModel viewModel)
         {
             captureService = FastScreenCaptureService.GetInstance();
 
-            screen = ViewModel.MonitorTwo ? 1 : 0;
-            width = ViewModel.Columns;
-            height = ViewModel.Rows;
+            screen = viewModel.MonitorTwo ? 1 : 0;
+            width = viewModel.Columns;
+            height = viewModel.Rows;
 
             writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
             captureService.Captured += Service_Captured;
@@ -75,8 +74,11 @@ namespace Ambiled.Core
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height),
-                            captureService.GetBuffer, width * 4, 0);
+                        writeableBitmap.WritePixels(
+                            new Int32Rect(0, 0, width, height),
+                            captureService.GetBuffer, 
+                            width * 4, 
+                            0);
 
                         ViewModel.Image = writeableBitmap;
                     });
@@ -93,27 +95,14 @@ namespace Ambiled.Core
 
             if (!ControllerService.IsOpen())
             {
-                Thread.Sleep(frameTime);
+                Thread.Sleep(FrameTime);
                 return;
             }
 
             if (ViewModel.EnablePostprocessing)
             {
-                //if (!ViewModel.EnableSmoothing)
-                //{
                 PostProcessImage();
                 ControllerService.Send(postProcessedBuffer, width, height);
-                //}
-                //else
-                //{
-                //    var gcHandle = GCHandle.Alloc(captureService.GetBuffer, GCHandleType.Pinned);
-                //    var bitmap = new Bitmap(width, height, width * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, gcHandle.AddrOfPinnedObject());
-
-                //    if (ViewModel.EnablePostprocessing)
-                //        bitmap = PostProcessImage(bitmap);
-
-                //    ControllerService.Send(bitmap);
-                //}
             }
             else
                 ControllerService.Send(captureService.GetBuffer, width, height);
@@ -121,7 +110,7 @@ namespace Ambiled.Core
             if (useFrameTimer)
             {
                 frameTimer.Stop();
-                Thread.Sleep(Math.Max(0, frameTime - (int)frameTimer.ElapsedMilliseconds));
+                Thread.Sleep(Math.Max(0, FrameTime - (int)frameTimer.ElapsedMilliseconds));
             }
         }
 

@@ -37,8 +37,10 @@ namespace Ambiled.Core
             }
             catch {
                 MessageBox.Show(
-                   $"An error occured opening the SerialPort for {comPort}.", "ArduinoSerialPort error",
-                   MessageBoxButton.OK, MessageBoxImage.Error);
+                   $"An error occured opening the SerialPort for {comPort}.", 
+                   "ArduinoSerialPort error",
+                   MessageBoxButton.OK, 
+                   MessageBoxImage.Error);
             }
         }
 
