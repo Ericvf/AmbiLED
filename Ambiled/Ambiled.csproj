@@ -42,20 +42,17 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Helpers">
       <HintPath>.\System.Web.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -73,7 +70,6 @@
     <Compile Include="Core\MainController.cs" />
     <Compile Include="Core\WebServer.cs" />
     <Compile Include="Core\WindowsHandleReporter.cs" />
-    <Compile Include="Xaml\VisualTreeHelperExtensions.cs" />
     <Page Include="Content\ExpressionDark.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

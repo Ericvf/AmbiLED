@@ -45,8 +45,6 @@ namespace Ambiled.Core
         int height = 16;
         int screen = 0;
 
-        Bitmap previousBitmap;
-
         [ImportingConstructor]
         public CaptureService(IViewModel ViewModel)
         {
@@ -149,80 +147,12 @@ namespace Ambiled.Core
             captureService.Start(screen, width, height);
         }
 
-        //private Bitmap PostProcessImage(Bitmap bitmap)
-        //{
-        //    var prevFastBitmap = default(FastBitmap);
-        //    if (ViewModel.EnableSmoothing && previousBitmap != null)
-        //    {
-        //        prevFastBitmap = new FastBitmap(previousBitmap);
-        //        prevFastBitmap.LockBitmap();
-        //    }
-
-        //    var capture = new FastBitmap(bitmap);
-        //    capture.LockBitmap();
-
-        //    int x = 0;
-        //    int y = 0;
-
-        //    for (y = 0; y < capture.Bitmap.Height; y++)
-        //    {
-        //        for (x = 0; x < capture.Bitmap.Width; x++)
-        //        {
-        //            var capturePixel = capture.GetPixel(x, bitmap.Height - y - 1);
-
-        //            if (ViewModel.EnableSmoothing && prevFastBitmap != null)
-        //            {
-        //                var previousPixel = prevFastBitmap.GetPixel(x, bitmap.Height - y - 1);
-        //                capturePixel.Blend(previousPixel, ViewModel.Smoothing);
-        //            }
-
-        //            capture.SetPixel(x, bitmap.Height - y - 1, capturePixel);
-        //        }
-        //    }
-
-        //    if (prevFastBitmap != null)
-        //    {
-        //        prevFastBitmap.UnlockBitmap();
-        //        prevFastBitmap.Dispose();
-        //    }
-
-        //    capture.UnlockBitmap();
-        //    previousBitmap = (Bitmap)capture.Bitmap.Clone();
-
-        //    capture.LockBitmap();
-
-        //    for (y = 0; y < capture.Bitmap.Height; y++)
-        //    {
-        //        for (x = 0; x < capture.Bitmap.Width; x++)
-        //        {
-        //            var px = capture.GetPixel(x, bitmap.Height - y - 1,
-        //                ViewModel.BChannel,
-        //                ViewModel.GChannel,
-        //                ViewModel.RChannel
-        //            );
-
-        //            px.SetHue(ViewModel.Hue);
-        //            px.SetLuminance(ViewModel.Brightness);
-        //            px.SetSaturation(ViewModel.Saturation);
-
-        //            capture.SetPixel(x, bitmap.Height - y - 1, px);
-        //        }
-        //    }
-
-        //    capture.UnlockBitmap();
-
-        //    var b = (Bitmap)capture.Bitmap.Clone();
-        //    capture.Dispose();
-
-        //    return b;
-        //}
-
         byte Interpolate(byte destination, byte source, float p)
         {
             return (byte)((destination * p) + source * (1 - p));
         }
 
-        private void PostProcessImage()
+        void PostProcessImage()
         {
             HLSColor hslColor;
             Color rgbColor;
