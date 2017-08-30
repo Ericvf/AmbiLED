@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Ambiled v1.3 - Appbyfex</title>
+
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no" />
+
+    <link rel="apple-touch-icon" href="http://cubeking.appbyfex.com/icons/Retro_Mushroom1UP4/ios/apple-touch-icon-precomposed.png" />
+    <script src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
+
+    <style type="text/css">
+        body {
+            background: -moz-linear-gradient(top, #196f95 0%, #28306d 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#196f95), color-stop(100%,#28306d)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #196f95 0%,#28306d 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #196f95 0%,#28306d 100%); /* Opera 11.10+ */
+            background: linear-gradient(to bottom, #196f95 0%,#28306d 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#196f95', endColorstr='#28306d',GradientType=0 ); /* IE6-9 */
+            background-attachment: fixed;
+            font-family: Gill Sans, Helvetica, Arial, sans-serif;
+        }
+
+        fieldset {
+            border: none;
+            margin-left: 20px;
+            margin-bottom: 2em;
+        }
+
+            fieldset legend {
+                font-size: 1.7em;
+                margin-left: -20px;
+                margin-top: 20px;
+                color: lightgray;
+            }
+
+            fieldset label {
+                font-size: 1.5em;
+                color: white;
+                font-style: italic;
+            }
+
+        input[type=range] {
+            width: 100%;
+            height: 40px;
+            margin-left: -10px;
+        }
+
+            input[type=range]::-webkit-slider-thumb {
+                border: 0px;
+                height: 36px;
+                width: 36px;
+                border-radius: 5px;
+                background: #ffffff;
+                margin-top: -9px;
+            }
+
+
+            input[type=range]::-webkit-slider-runnable-track {
+                height: 18px;
+                cursor: pointer;
+                background: #333;
+                border-radius: 4px;
+                border: 0.2px solid #010101;
+            }
+
+        .radios {
+            margin-top: 1em;
+        }
+
+        input[type=radio] {
+            height: 36px;
+            width: 36px;
+            margin-left: -10px;
+            border: 0.2px solid #010101;
+            background: #333;
+        }
+
+            input[type=radio]:after {
+                position: absolute;
+                left: 60px;
+                z-index: 0;
+                content: attr(data-text);
+                padding-left: 14px;
+                padding-top: 8px;
+                font-style: italic;
+                font-size: 1.3rem;
+                color: lightgray;
+            }
+
+        .checkboxSlider {
+            display: inline-block;
+            width: 120px;
+            height: 46px;
+            background: #333;
+            position: relative;
+            border-radius: 5px;
+            box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.15);
+            margin-top: 3px;
+            margin-bottom: 3px;
+            font-size: 1.5em;
+            margin-left: -10px;
+        }
+
+            .checkboxSlider:before {
+                z-index: 0;
+                content: 'on';
+                color: orange;
+                position: absolute;
+                left: 0;
+                height: 46px;
+                width: 60px;
+                padding-left: 18px;
+                padding-top: 8px;
+            }
+
+            .checkboxSlider:after {
+                z-index: 0;
+                content: 'off';
+                color: darkgray;
+                position: absolute;
+                left: 60px;
+                height: 46px;
+                width: 60px;
+                padding-left: 14px;
+                padding-top: 8px;
+            }
+
+            .checkboxSlider label {
+                display: block;
+                width: 58px;
+                height: 40px;
+                cursor: pointer;
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                z-index: 1;
+                background: #fcfff4;
+                background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+                background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+                border-radius: 5px;
+                -webkit-transition: all 0.4s ease;
+                transition: all 0.4s ease;
+                box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+                margin: 0;
+            }
+
+            .checkboxSlider input[type=checkbox] {
+                visibility: hidden;
+            }
+
+                .checkboxSlider input[type=checkbox]:checked + label {
+                    left: 59px;
+                }
+
+            .checkboxSlider input:after {
+                visibility: visible;
+                content: attr(data-text);
+                font-style: italic;
+                font-size: 1.3rem;
+                white-space: nowrap;
+                display: inline-block;
+                color: lightgray;
+                margin-left: 130px;
+            }
+    </style>
+
+    <script type="text/javascript">
+        var url = "/";
+
+        $(function () { 
+            $.each($("input[type=checkbox]"), function (k, v) {
+                $(v).change(function () {
+                    var id = $(this).attr('id');
+                    var val = $(this).is(':checked');
+                    $.ajax(url, {
+                        data: JSON.stringify({ id: id, value: val }),
+                        type: 'POST'
+                    });
+                });
+            });
+
+            $.each($("input[type=range]"), function (k, v) {
+                $(v).change(function () {
+                    var id = $(this).attr('id');
+                    var val = parseFloat($(this).val());
+                    $.ajax(url, {
+                        data: JSON.stringify({ id: id, value: val }),
+                        type: 'POST'
+                    });
+                });
+            });
+
+            $.get("http://192.168.1.10:82/?148");
+
+            $.ajax({
+                dataType: "json",
+                url: url + "?",
+                async: true,
+                timeout: 1000,
+                success: function (e) {
+                    $("#Usb").prop("checked", e.Usb);
+                    $("#EnableCapture").prop("checked", e.EnableCapture);
+                    $("#EnablePostprocessing").prop("checked", e.EnablePostprocessing);
+                    $("#EnableFixedFPS").prop("checked", e.EnableFixedFPS);
+                    $("#EnableSmoothing").prop("checked", e.EnableSmoothing);
+                    $("#Smoothing").val(e.Smoothing * 100);
+
+                    $("#Brightness").val(e.Brightness * 100);
+                    $("#Hue").val(e.Hue * 100);
+                    $("#Saturation").val(e.Saturation * 100);
+
+                    $("#EnableCrop").prop("checked", e.EnableCrop);
+
+                    $("#EnableAuto3d").prop("checked", e.EnableAuto3d);
+                    $("#Is3DOff").prop("checked", e.Is3DOff);
+                    $("#Is3DSBS").prop("checked", e.Is3DSBS);
+                    $("#Is3DOU").prop("checked", e.Is3DOU);
+
+                    $("#EnableGamma").prop("checked", e.EnableGamma);
+                },
+                error: function (e) {
+                }
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+    <div class="ambilight">
+        <fieldset>
+            <legend>Capture settings</legend>
+            <!--USB Connection-->
+            <div class="checkboxSlider">
+                <input type="checkbox" value="None" id="Usb" data-text="USB connection" />
+                <label for="Usb"></label>
+            </div>
+
+            <!--Postprocessing-->
+            <legend>Post-processing settings</legend>
+            <div class="checkboxSlider">
+                <input type="checkbox" value="None" id="EnablePostprocessing" data-text="Postprocessing" />
+                <label for="EnablePostprocessing"></label>
+            </div>
+            <br />
+
+            <!--EnableFixedFPS-->
+            <div class="checkboxSlider">
+                <input type="checkbox" value="None" id="EnableFixedFPS" data-text="Use fixed FPS" />
+                <label for="EnableFixedFPS"></label>
+            </div>
+            <br />
+
+            <!--EnableSmoothing-->
+            <legend>Smoothing</legend>
+            <div class="checkboxSlider">
+                <input type="checkbox" value="None" id="EnableSmoothing" data-text="Smoothing" />
+                <label for="EnableSmoothing"></label>
+            </div>
+            <input type="range" id="Smoothing" min="1" max="100" step="5">
+
+            <!--Brightness/Hue/Saturation-->
+            <legend>Brightness / Hue / Saturation</legend>
+            <input type="range" id="Brightness" min="0" max="150" step="5">
+            <input type="range" id="Hue" min="0" max="100" step="5">
+            <input type="range" id="Saturation" min="0" max="200" step="5">
+
+            <!--Cropping-->
+            <legend>Cropping</legend>
+            <div class="checkboxSlider">
+                <input type="checkbox" value="None" id="EnableCrop" data-text="Cropping" />
+                <label for="EnableCrop"></label>
+            </div>
+
+            <!--3d settings-->
+            <legend>3D settings</legend>
+            <div class="checkboxSlider">
+                <input type="checkbox" id="Enable3D" data-text="Enable 3D detection" />
+                <label for="Enable3D"></label>
+            </div>
+
+            <div class="radios">
+                <input type="radio" id="Is3DOff" data-text="2D none" name="group3d" /><br />
+                <input type="radio" id="Is3DSBS" data-text="3D half side-by-side" name="group3d" /><br />
+                <input type="radio" id="Is3DOU" data-text="3D half over-under" name="group3d" /><br />
+            </div>
+
+            <!--EnableGamma-->
+            <legend>Gamma correction</legend>
+            <div class="checkboxSlider">
+                <input type="checkbox" id="EnableGamma" data-text="Enable gamma" />
+                <label for="EnableGamma"></label>
+            </div>
+        </fieldset>
+    </div>
+
+</body>
+</html>

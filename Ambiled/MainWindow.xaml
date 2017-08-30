@@ -1,0 +1,355 @@
+﻿<Window x:Class="Ambiled.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ambiled.NET v1.3 - Appbyfex" 
+        MinHeight="650" 
+        MinWidth="525" 
+        Width="525" 
+        Height="750" 
+        Icon="Content/ambiled.ico">
+    <Grid>
+        <Grid>
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF28306D" Offset="1"/>
+                    <GradientStop Color="#FF196F95"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--Visibility="{Binding EnableCapture, Converter={StaticResource visibilityConverter}}"-->
+            <Grid HorizontalAlignment="Right"  Margin="0,0,10,0" Grid.RowSpan="2">
+                <TextBlock Foreground="White" FontSize="24"
+                    Visibility="{Binding FPS, Converter={StaticResource visibilityConverter}}">
+                    <Run Text="{Binding FPS}" />
+                </TextBlock>
+            </Grid>
+            
+            <StackPanel Grid.Row="0">
+                <!--Visibility="{Binding EnableCapture, Converter={StaticResource visibilityConverter}}"-->
+                <TextBlock FontSize="18" Text="{Binding CaptureTitle}" TextTrimming="CharacterEllipsis" Foreground="White"
+                           Margin="10,10,60,10">
+                    <TextBlock.Effect>
+                        <DropShadowEffect  Opacity="1" BlurRadius="4" ShadowDepth="2"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{StaticResource CheckerTiles}"
+                        CornerRadius="2">
+                    <Border.Effect>
+                        <DropShadowEffect Direction="-50" Opacity=".25"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Image Source="{Binding Image}" Width="399" Height="265" Stretch="Fill" x:Name="previewWindow"/>
+                        <Image Stretch="None" Source="Content/Ambiled.png" Opacity="0"/>
+                    </Grid>
+                    
+                </Border>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ToggleButton Padding="15" Margin="5" Width="75" IsChecked="{Binding MonitorOne}" Click="btnChangeMonitor_Click">Monitor 1</ToggleButton>
+                    <ToggleButton Padding="15" Margin="5" Width="75" IsChecked="{Binding MonitorTwo}" Click="btnChangeMonitor_Click">Monitor 2</ToggleButton>
+                    <!--<Button Click="btnAutoClick" Padding="5" Margin="5">
+                        Auto-attach
+                    </Button>
+
+                    <Button Click="btnWindowClick"  Padding="5" Margin="5">
+                        Desktop Window
+                    </Button>
+
+                    <Grid>
+                        <Button IsHitTestVisible="False" Padding="5" Margin="5">
+                            Choose window
+                        </Button>
+                        <Rectangle Fill="Transparent" MouseLeftButtonDown="MouseLeftButtonDownHandler" Cursor="SizeAll"/>
+                    </Grid>-->
+                </StackPanel>
+            </StackPanel>
+
+            <TabControl Margin="40, 20, 40, 0" Grid.Row="1">
+                <TabItem Header="Capture">
+
+                    <ScrollViewer>
+
+                        <StackPanel Margin="10">
+                            <TextBlock Style="{StaticResource H1}">Capture settings</TextBlock>
+
+                            <CheckBox Margin="5,5,0,0" Content="Enable capture" IsChecked="{Binding EnableCapture}" Visibility="Collapsed"/>
+
+                            <TextBlock Style="{StaticResource H2}">Setup:</TextBlock>
+                            <TextBlock Margin="5,5,0,0" Foreground="DarkGray" FontStyle="Italic"><Run Text="Use the following fields to update the dimension of your LED setup"/></TextBlock>
+
+                            <Grid Margin="12,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Horizontal number of LEDs: " Foreground="{StaticResource TextBrush}" Grid.Row="0" VerticalAlignment="Center" />
+                                <TextBlock Text="Vertical number of LEDs: " Foreground="{StaticResource TextBrush}" Grid.Row="1" VerticalAlignment="Center"/>
+                                <TextBox Width="30" Text="{Binding Columns}" Grid.Column="1" Margin="1"/>
+                                <TextBox Width="30" Text="{Binding Rows}" Grid.Column="1" Grid.Row="1"  Margin="1"/>
+
+                                <TextBox Width="30" Text="{Binding ColumnsGrid}" Grid.Column="2" Margin="1" Visibility="Collapsed"/>
+                                <TextBox Width="30" Text="{Binding RowsGrid}" Grid.Column="2" Grid.Row="1"  Visibility="Collapsed" Margin="1"/>
+                                
+                                <Button HorizontalAlignment="Right" Margin="5" Padding="5" Grid.Column="3" Grid.RowSpan="2" Click="btnUpdateSetup">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="Content/row_preferences.png" Stretch="Fill" Width="16" Height="16"/>
+                                        <TextBlock VerticalAlignment="Center" Margin="5,0,0,0">Update setup</TextBlock>
+                                    </StackPanel>
+                                </Button>
+                                
+
+                            </Grid>
+
+                            <StackPanel Margin="10,5,5,5" Orientation="Horizontal">
+                                <RadioButton Margin="1" IsChecked="{Binding IsAmbilight}">Ambilight</RadioButton>
+                                <RadioButton Margin="10,1,1,1" IsChecked="{Binding IsBoxlight}">Box light</RadioButton>
+                            </StackPanel>
+
+                            <TextBlock Style="{StaticResource H2}">3D settings:</TextBlock>
+                            <TextBlock Margin="5,5,0,0" Foreground="DarkGray" FontStyle="Italic"><Run Text="Choose 3d correction mode"/></TextBlock>
+
+                            <CheckBox Margin="5,5,0,0" Content="Enable auto 3D detection" IsChecked="{Binding EnableAuto3d}"/>
+
+                            <StackPanel  Margin="10,5,5,5">
+                                <RadioButton Margin="1" IsChecked="{Binding Is3DOff}">2D (none)</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding Is3DSBS}">3D Half Side by Side</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding Is3DOU}">3D Half Over Under</RadioButton>
+                            </StackPanel>
+                        </StackPanel>
+
+                    </ScrollViewer>
+
+                </TabItem>
+                
+                <TabItem Header="Post processing">
+
+                    <ScrollViewer>
+                        <StackPanel Margin="10">
+                            <TextBlock Style="{StaticResource H1}">Post-processing settings</TextBlock>
+
+                            <CheckBox Margin="5,5,0,0" Content="Use fixed FPS (60 fps)" IsChecked="{Binding EnableFixedFPS}"/>
+                            <CheckBox Margin="5,5,0,0" Content="Enable post-processing" IsChecked="{Binding EnablePostprocessing}"/>
+                            <CheckBox Margin="5,5,0,0" Content="Show preview" IsChecked="{Binding ShowPreview}"/>
+                            
+                            <TextBlock  Style="{StaticResource H2}">Cropping:</TextBlock>
+                            <CheckBox Margin="5,5,0,0" Content="Enable auto crop" IsChecked="{Binding EnableCrop}"/>
+
+                            <Grid Margin="5,5,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="0" VerticalAlignment="Center">Horizontal crop:</TextBlock>
+                                <Slider Grid.Row="0" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="{Binding MaxCropX}" Value="{Binding CropX}" IsSnapToTickEnabled="True" TickFrequency="1" x:Name="slCropX"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" VerticalAlignment="Center">
+                                    <Run Text="{Binding CropX}"/>
+                                    <Run Text=" px"/>
+                                </TextBlock>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="1" VerticalAlignment="Center">Vertical crop:</TextBlock>
+                                <Slider Grid.Row="1" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="{Binding MaxCropY}" Value="{Binding CropY}" IsSnapToTickEnabled="True" TickFrequency="1" x:Name="slCropY"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
+                                    <Run Text="{Binding CropY}"/>
+                                    <Run Text=" px"/>
+                                </TextBlock>
+
+
+                            </Grid>
+
+                            <TextBlock  Style="{StaticResource H2}">Smoothing:</TextBlock>
+                            <CheckBox Margin="5,5,0,0" Content="Enable smoothing" IsChecked="{Binding EnableSmoothing}"/>
+
+                            <Grid Margin="20,5,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Slider Grid.Row="0" Margin="20,2,10,2" Grid.Column="1" Minimum="0.01" Maximum="0.5" Value="{Binding Smoothing}" IsSnapToTickEnabled="True" TickFrequency="0.01" TickPlacement="BottomRight"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Text="{Binding Smoothing}" VerticalAlignment="Center"/>
+                            </Grid>
+
+
+                            <TextBlock  Style="{StaticResource H2}">Brightness:</TextBlock>
+                            <Grid Margin="20,5,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Visibility="Hidden"><Run Text="R:"/></TextBlock>
+                                <Slider Margin="20,2,10,2" Grid.Row="0"  Grid.Column="1" Grid.ColumnSpan="1" IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight" 
+                            		Minimum="0" Maximum="1.5" Value="{Binding Brightness}" />
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Text="{Binding Brightness, Converter={StaticResource ResourceKey=floatToPercentConverter}}" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <TextBlock  Style="{StaticResource H2}">Hue / Saturation:</TextBlock>
+                            <Grid Margin="20,5,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="0">Hue:</TextBlock>
+                                <Slider Grid.Row="0" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding Hue}"
+                                        IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight"/>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Grid.Row="0" Text="{Binding Hue, Converter={StaticResource ResourceKey=floatToPercentConverter}}"/>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="1">Saturnation:</TextBlock>
+                                <Slider Grid.Row="1" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="2" Value="{Binding Saturation}"
+                                        IsSnapToTickEnabled="True" TickFrequency="0.1" TickPlacement="BottomRight"/>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Grid.Row="2" Text="{Binding Saturation, Converter={StaticResource ResourceKey=floatToPercentConverter}}"/>
+                            </Grid>
+
+                            <TextBlock  Style="{StaticResource H2}">Color correction:</TextBlock>
+                            <TextBlock Margin="5,5,0,0" Foreground="DarkGray" FontStyle="Italic"><Run Text="Use the sliders to correct individual channels"/></TextBlock>
+                            <CheckBox Margin="5,5,0,0" Content="Enable gamma correction" IsChecked="{Binding EnableGamma}"/>
+                            <Grid Margin="20,5,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Slider Grid.Row="0" Margin="20,2,10,2" Grid.Column="1" Minimum="1" Maximum="2" Value="{Binding GammeValue}" IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Text="{Binding GammeValue}" VerticalAlignment="Center"/>
+                            </Grid>
+
+
+                            <Grid Margin="20,5,20,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="0">R:</TextBlock>
+                                <Slider Grid.Row="0" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding RChannel}" IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Text="{Binding RChannel, Converter={StaticResource ResourceKey=floatToPercentConverter}}"/>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="1">G:</TextBlock>
+                                <Slider Grid.Row="1" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding GChannel}" IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Grid.Row="1" Text="{Binding GChannel, Converter={StaticResource ResourceKey=floatToPercentConverter}}"/>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="2">B:</TextBlock>
+                                <Slider Grid.Row="2" Margin="20,2,10,2" Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding BChannel}" IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight"/>
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Grid.Row="2" Text="{Binding BChannel, Converter={StaticResource ResourceKey=floatToPercentConverter}}"/>
+                            </Grid>
+
+                           
+
+                        </StackPanel>
+                    </ScrollViewer>
+                    
+                </TabItem>
+                <TabItem Header="Controller">
+                    <Grid>
+                        <StackPanel Margin="10">
+                            <TextBlock Style="{StaticResource H1}">Controller settings</TextBlock>
+
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" VerticalAlignment="Center" Margin="0,0,5,0">COM port:</TextBlock>
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding ComDevices}" SelectedItem="{Binding ComDevice}" />
+                                <Button Grid.Column="2" Width="30" Margin="5,0,0,0" Click="btnRefreshCom"  Padding="0">
+                                    <Image Source="Content/refresh.png" Stretch="Fill" Width="16" Height="16"/>
+                                </Button>
+
+                                <TextBlock Foreground="{StaticResource TextBrush}" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,5,0">Baud rate:</TextBlock>
+                                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding BaudRate}" Margin="0,5,0,5" Width="100" HorizontalAlignment="Left"/>
+
+                                <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Margin="5" IsChecked="{Binding IsConnectOnStart}"
+                                          Content="Connect on application start" />
+                            </Grid>
+
+                            <TextBlock Margin="5,5,0,0" Foreground="DarkGray" FontStyle="Italic"><Run Text="Choose LED input format"/></TextBlock>
+
+                            <StackPanel  Margin="10,5,5,5">
+                                <RadioButton Margin="1" IsChecked="{Binding Is2bit}">8 bits (2 bits per channel)</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding Is5bit}">16 bits (5 bits per channel)</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding Is8bit}">24 bits (8 bits per channel)</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding Is12bit}">36 bits (12 bits per channel)</RadioButton>
+                            </StackPanel>
+
+
+                            <TextBlock Margin="5,5,0,0" Foreground="DarkGray" FontStyle="Italic"><Run Text="Choose LED channel order"/></TextBlock>
+
+                            <StackPanel  Margin="10,5,5,5">
+                                <RadioButton Margin="1" IsChecked="{Binding IsRGB}">RGB</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding IsBGR}">BGR</RadioButton>
+                                <RadioButton Margin="1" IsChecked="{Binding IsRBG}">RBG</RadioButton>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <Button Click="btnToggleController" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Margin="10" Width="200" Height="50" Content="{Binding EnableController}" />
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Debug">
+                    <Grid Margin="10">
+                        <ListBox x:Name="lb" ItemsSource="{Binding Messages}">
+                        </ListBox>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right">
+                <TextBlock Text="{Binding Message}"  Foreground="White" Margin="2" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
