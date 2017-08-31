@@ -68,22 +68,7 @@ namespace Ambiled.Core
             if (useFrameTimer)
                 frameTimer.Restart();
 
-            if (ViewModel.ShowPreview)
-            {
-                Task.Run(() =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        writeableBitmap.WritePixels(
-                            new Int32Rect(0, 0, width, height),
-                            captureService.GetBuffer, 
-                            width * 4, 
-                            0);
-
-                        ViewModel.Image = writeableBitmap;
-                    });
-                });
-            }
+            UpdatePreview();
 
             if (fpsTimer.ElapsedMilliseconds > 1000)
             {
@@ -93,10 +78,10 @@ namespace Ambiled.Core
             }
             else fps++;
 
-            if (!ControllerService.IsOpen())
+            if (useFrameTimer)
             {
-                Thread.Sleep(FrameTime);
-                return;
+                frameTimer.Stop();
+                Thread.Sleep(Math.Max(0, FrameTime - (int)frameTimer.ElapsedMilliseconds));
             }
 
             if (ViewModel.EnablePostprocessing)
@@ -106,11 +91,29 @@ namespace Ambiled.Core
             }
             else
                 ControllerService.Send(captureService.GetBuffer, width, height);
+        }
 
-            if (useFrameTimer)
+        private void UpdatePreview()
+        {
+            if (ViewModel.ShowPreview)
             {
-                frameTimer.Stop();
-                Thread.Sleep(Math.Max(0, FrameTime - (int)frameTimer.ElapsedMilliseconds));
+                Task.Run(() =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        writeableBitmap.WritePixels(
+                            new Int32Rect(0, 0, width, height),
+                            ViewModel.EnablePostprocessing
+                                && ViewModel.EnableSmoothing
+                                && postProcessedBuffer.Length == captureService.GetBuffer.Length
+                                    ? postProcessedBuffer
+                                    : captureService.GetBuffer,
+                            width * 4,
+                            0);
+
+                        ViewModel.Image = writeableBitmap;
+                    });
+                });
             }
         }
 
@@ -183,6 +186,7 @@ namespace Ambiled.Core
                     hslColor.saturation = (int)(ViewModel.Saturation * hslColor.saturation);
 
                     rgbColor = HLSColor.ColorFromHLS(hslColor.hue, hslColor.luminosity, hslColor.saturation);
+                    postProcessedBuffer[offset + 3] = 255;
                     postProcessedBuffer[offset + 2] = rgbColor.R;
                     postProcessedBuffer[offset + 1] = rgbColor.G;
                     postProcessedBuffer[offset + 0] = rgbColor.B;
