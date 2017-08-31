@@ -24,7 +24,7 @@ namespace Ambiled.Core
         bool MonitorTwo { get; }
 
         ObservableCollection<string> ComDevices { get; set; }
-        string ComDevice { get; }
+        string ComDevice { get; set; }
         int BaudRate { get; }
 
         int Rows { get; }
@@ -179,7 +179,7 @@ namespace Ambiled.Core
                 }
             }
         }
-        private bool _MonitorOne;
+        private bool _MonitorOne = true;
         public const string MonitorOnePropertyName = "MonitorOne";
 
         public bool MonitorTwo
@@ -312,7 +312,6 @@ namespace Ambiled.Core
                 if (_EnableCapture != value)
                 {
                     _EnableCapture = value;
-                    //OnEnableCaptureChange();
                     OnPropertyChanged(EnableCapturePropertyName);
                 }
             }
@@ -437,7 +436,7 @@ namespace Ambiled.Core
                 }
             }
         }
-        private bool _IsAmbilight;
+        private bool _IsAmbilight = true;
         public const string IsAmbilightPropertyName = "IsAmbilight";
 
         public bool IsBoxlight
@@ -800,7 +799,7 @@ namespace Ambiled.Core
                 }
             }
         }
-        private bool _ShowPreview;
+        private bool _ShowPreview = true;
         public const string ShowPreviewPropertyName = "ShowPreview";
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 
@@ -75,6 +76,11 @@ namespace Ambiled.Core
         {
             Logger.Add("Loading devices");
             ViewModel.ComDevices = new ObservableCollection<string>(ArduinoSerialPort.GetDevices());
+
+            if (string.IsNullOrEmpty(ViewModel.ComDevice) || !ViewModel.ComDevices.Contains(ViewModel.ComDevice))
+                ViewModel.ComDevice = ViewModel.ComDevices
+                    .OrderBy(x => x)
+                    .LastOrDefault();
         }
 
         public void Send(byte[] bytes, int width, int height)
