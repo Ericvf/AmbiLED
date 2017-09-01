@@ -13,7 +13,7 @@ using namespace DirectX;
 
 extern "C" {
 	__declspec(dllexport) HRESULT Initialize(int outputNum, int width, int height);
-	__declspec(dllexport) void CaptureScreen(byte* imageData);
+	__declspec(dllexport) void CaptureScreen(byte* imageData, bool sbs, bool hou);
 	__declspec(dllexport) void Clean();
 }
 
@@ -43,6 +43,7 @@ ID3D11VertexShader* VertexShader;
 ID3D11PixelShader* PixelShader;
 ID3D11InputLayout* InputLayout;
 ID3D11Buffer* VertexBuffer;
+ID3D11Buffer* ConstantBuffer;
 
 ID3D11RenderTargetView* renderTargetView;
 ID3D11Texture2D* renderTargetTexture;
@@ -71,3 +72,11 @@ D3D11_INPUT_ELEMENT_DESC Layout[] =
 	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
+
+__declspec(align(16))
+struct VS_CONSTANT_BUFFER {
+	float isSBS;
+	float isHOU;
+};
+
+VS_CONSTANT_BUFFER constantBufferData;
