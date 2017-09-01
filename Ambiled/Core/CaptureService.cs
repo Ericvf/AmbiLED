@@ -47,23 +47,27 @@ namespace Ambiled.Core
         [ImportingConstructor]
         public CaptureService(IViewModel viewModel)
         {
-            captureService = FastScreenCaptureService.GetInstance();
-
             screen = viewModel.MonitorTwo ? 1 : 0;
             width = viewModel.Columns;
             height = viewModel.Rows;
 
-            writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
-            captureService.Captured += Service_Captured;
-            captureService.Start(screen, width, height);
-
             frameTimer = new Stopwatch();
             fpsTimer = new Stopwatch();
             fpsTimer.Start();
+
+            writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
+            captureService = FastScreenCaptureService.GetInstance();
+            captureService.Captured += Service_Captured;
+            captureService.IsSBS = viewModel.Is3DSBS;
+            captureService.IsHOU = viewModel.Is3DOU;
+            captureService.Start(screen, width, height);
         }
 
         private void Service_Captured(object sender, EventArgs e)
         {
+            captureService.IsSBS = ViewModel.Is3DSBS;
+            captureService.IsHOU = ViewModel.Is3DOU;
+
             bool useFrameTimer = ViewModel.EnableFixedFPS;
             if (useFrameTimer)
                 frameTimer.Restart();

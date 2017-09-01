@@ -6,8 +6,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved
 //----------------------------------------------------------------------
 
-Texture2D tx : register( t0 );
-SamplerState samLinear : register( s0 );
+cbuffer PS_CONSTANT_BUFFER : register(b0)
+{
+	float isSBS;
+	float isHOU;
+};
+
+Texture2D captureTexture : register( t0 );
+SamplerState linearSampler : register( s0 );
 
 struct PS_INPUT
 {
@@ -20,5 +26,8 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 float4 PS(PS_INPUT input) : SV_Target
 {
-	return tx.Sample(samLinear, input.Tex);
+	if (isSBS) input.Tex.x *= 0.5;
+	else if (isHOU) input.Tex.y *= 0.5;
+
+	return captureTexture.Sample(linearSampler, input.Tex);
 } 

@@ -16,7 +16,7 @@ namespace Ambiled.Core
             public static extern void Clean();
 
             [DllImport("FastScreenCapture.dll", CallingConvention = CallingConvention.Cdecl)]
-            public static extern int CaptureScreen(byte[] imageData);
+            public static extern int CaptureScreen(byte[] imageData, bool sbs, bool hou);
         }
 
         private static FastScreenCaptureService instance;
@@ -35,6 +35,26 @@ namespace Ambiled.Core
         private CancellationTokenSource captureTaskToken;
         private Task captureTask;
         private byte[] buffer;
+
+        private bool isSBS;
+        public bool IsSBS
+        {
+            set
+            {
+                isSBS = value;
+                if (isSBS && isHOU) isHOU = false;
+            }
+        }
+
+        private bool isHOU;
+        public bool IsHOU
+        {
+            set
+            {
+                isHOU = value;
+                if (isSBS && isHOU) isSBS = false;
+            }
+        }
 
         public byte[] GetBuffer => buffer;
 
@@ -66,7 +86,7 @@ namespace Ambiled.Core
         {
             while (!captureTaskToken.IsCancellationRequested)
             {
-                SafeNativeMethods.CaptureScreen(buffer);
+                SafeNativeMethods.CaptureScreen(buffer, isSBS, isHOU);
                 Captured?.Invoke(this, null);
             }
         }
