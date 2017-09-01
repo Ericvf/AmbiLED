@@ -110,6 +110,13 @@ HRESULT InitDevice() {
 	if (FAILED(hr))
 		return hr;
 
+	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(VS_CONSTANT_BUFFER), D3D11_BIND_CONSTANT_BUFFER);
+	hr = device->CreateBuffer(
+		&constantBufferDesc,
+		nullptr,
+		&ConstantBuffer
+	);
+
 	deviceInitialized = true;
 	return hr;
 }
@@ -245,7 +252,7 @@ HRESULT InitResources() {
 	return hr;
 }
 
-void CaptureScreen(byte* imageData) {
+void CaptureScreen(byte* imageData, bool sbs, bool hou) {
 	if (!isInitialized)
 		return;
 
@@ -264,7 +271,7 @@ void CaptureScreen(byte* imageData) {
 	DesktopResource->Release();
 	DesktopResource = nullptr;
 
-	// get acquired desc
+	// Get acquired desc
 	D3D11_TEXTURE2D_DESC acquiredTextureDescription;
 	acquiredDesktopImage->GetDesc(&acquiredTextureDescription);
 
@@ -280,9 +287,20 @@ void CaptureScreen(byte* imageData) {
 	if (FAILED(hr))
 		return;
 
-	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	// Update the constant buffer
+	constantBufferData.isSBS = sbs ? 1.0f : 0.0f;
+	constantBufferData.isHOU = hou ? 1.0f : 0.0f;
+	deviceContext->UpdateSubresource(
+		ConstantBuffer,
+		0,
+		NULL,
+		&constantBufferData,
+		0,
+		0
+	);
 
 	// Set render target 
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	deviceContext->RSSetViewports(1, &renderTargetViewport);
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, nullptr);
 	deviceContext->ClearRenderTargetView(renderTargetView, color);
@@ -292,6 +310,7 @@ void CaptureScreen(byte* imageData) {
 	deviceContext->PSSetShader(PixelShader, nullptr, 0);
 	deviceContext->PSSetShaderResources(0, 1, &shaderResourceView);
 	deviceContext->PSSetSamplers(0, 1, &pointSamplerState);
+	deviceContext->PSSetConstantBuffers(0, 1, &ConstantBuffer);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
