@@ -238,7 +238,6 @@ HRESULT InitResources() {
 	renderTargetResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	renderTargetResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
-
 	if (renderTargetResourceView)
 	{
 		renderTargetResourceView->Release();
@@ -252,19 +251,19 @@ HRESULT InitResources() {
 	return hr;
 }
 
-void CaptureScreen(byte* imageData, bool sbs, bool hou) {
+HRESULT CaptureScreen(byte* imageData, float brightness, bool sbs, bool hou) {
 	if (!isInitialized)
-		return;
+		return -1;
 
 	IDXGIResource* DesktopResource = nullptr;
 	DXGI_OUTDUPL_FRAME_INFO FrameInfo;
-	HRESULT hr = outputDuplication->AcquireNextFrame(1, &FrameInfo, &DesktopResource);
+	HRESULT hr = outputDuplication->AcquireNextFrame(5, &FrameInfo, &DesktopResource);
 
 	if (hr == DXGI_ERROR_WAIT_TIMEOUT)
-		return;
+		return hr;
 
 	if (FAILED(hr))
-		return;
+		return hr;
 
 	// Acquire image
 	hr = DesktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&acquiredDesktopImage));
@@ -285,11 +284,12 @@ void CaptureScreen(byte* imageData, bool sbs, bool hou) {
 	ID3D11ShaderResourceView* shaderResourceView = nullptr;
 	hr = device->CreateShaderResourceView(acquiredDesktopImage, &shaderResourceViewDesc, &shaderResourceView);
 	if (FAILED(hr))
-		return;
+		return hr;
 
 	// Update the constant buffer
 	constantBufferData.isSBS = sbs ? 1.0f : 0.0f;
 	constantBufferData.isHOU = hou ? 1.0f : 0.0f;
+	constantBufferData.brightness = brightness;
 	deviceContext->UpdateSubresource(
 		ConstantBuffer,
 		0,
@@ -343,7 +343,9 @@ void CaptureScreen(byte* imageData, bool sbs, bool hou) {
 	// Release map
 	deviceContext->Unmap(stagingTexture, subResource);
 
-	outputDuplication->ReleaseFrame();
+	hr = outputDuplication->ReleaseFrame();
+
+	return hr;
 }
 
 void Clean() {

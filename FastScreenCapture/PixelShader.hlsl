@@ -10,6 +10,7 @@ cbuffer PS_CONSTANT_BUFFER : register(b0)
 {
 	float isSBS;
 	float isHOU;
+	float brightness;
 };
 
 Texture2D captureTexture : register( t0 );
@@ -29,5 +30,8 @@ float4 PS(PS_INPUT input) : SV_Target
 	if (isSBS) input.Tex.x *= 0.5;
 	else if (isHOU) input.Tex.y *= 0.5;
 
-	return captureTexture.Sample(linearSampler, input.Tex);
+	float4 color = captureTexture.Sample(linearSampler, input.Tex);
+	color.rgb *= brightness;
+	
+	return color;
 } 

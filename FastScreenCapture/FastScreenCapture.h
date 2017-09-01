@@ -13,7 +13,7 @@ using namespace DirectX;
 
 extern "C" {
 	__declspec(dllexport) HRESULT Initialize(int outputNum, int width, int height);
-	__declspec(dllexport) void CaptureScreen(byte* imageData, bool sbs, bool hou);
+	__declspec(dllexport) long CaptureScreen(byte* imageData, float brightness, bool sbs, bool hou);
 	__declspec(dllexport) void Clean();
 }
 
@@ -77,6 +77,7 @@ __declspec(align(16))
 struct VS_CONSTANT_BUFFER {
 	float isSBS;
 	float isHOU;
+	float brightness;
 };
 
 VS_CONSTANT_BUFFER constantBufferData;

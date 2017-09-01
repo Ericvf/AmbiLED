@@ -45,11 +45,11 @@ namespace Ambiled.Core
         int screen = 0;
 
         [ImportingConstructor]
-        public CaptureService(IViewModel viewModel)
+        public CaptureService(IViewModel ViewModel)
         {
-            screen = viewModel.MonitorTwo ? 1 : 0;
-            width = viewModel.Columns;
-            height = viewModel.Rows;
+            screen = ViewModel.MonitorTwo ? 1 : 0;
+            width = ViewModel.Columns;
+            height = ViewModel.Rows;
 
             frameTimer = new Stopwatch();
             fpsTimer = new Stopwatch();
@@ -58,13 +58,15 @@ namespace Ambiled.Core
             writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
             captureService = FastScreenCaptureService.GetInstance();
             captureService.Captured += Service_Captured;
-            captureService.IsSBS = viewModel.Is3DSBS;
-            captureService.IsHOU = viewModel.Is3DOU;
+            captureService.Brightness = ViewModel.Brightness;
+            captureService.IsSBS = ViewModel.Is3DSBS;
+            captureService.IsHOU = ViewModel.Is3DOU;
             captureService.Start(screen, width, height);
         }
 
         private void Service_Captured(object sender, EventArgs e)
         {
+            captureService.Brightness = ViewModel.Brightness;
             captureService.IsSBS = ViewModel.Is3DSBS;
             captureService.IsHOU = ViewModel.Is3DOU;
 
@@ -186,7 +188,7 @@ namespace Ambiled.Core
                     }
 
                     hslColor.hue += (int)(ViewModel.Hue * 240);
-                    hslColor.luminosity = (int)(ViewModel.Brightness * hslColor.luminosity);
+                  //  hslColor.luminosity = (int)(ViewModel.Brightness * hslColor.luminosity);
                     hslColor.saturation = (int)(ViewModel.Saturation * hslColor.saturation);
 
                     rgbColor = HLSColor.ColorFromHLS(hslColor.hue, hslColor.luminosity, hslColor.saturation);

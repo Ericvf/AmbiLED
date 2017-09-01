@@ -205,7 +205,7 @@
 
                                 <TextBlock Grid.Row="0" Visibility="Hidden"><Run Text="R:"/></TextBlock>
                                 <Slider Margin="20,2,10,2" Grid.Row="0"  Grid.Column="1" Grid.ColumnSpan="1" IsSnapToTickEnabled="True" TickFrequency="0.05" TickPlacement="BottomRight" 
-                            		Minimum="0" Maximum="1.5" Value="{Binding Brightness}" />
+                            		Minimum="0" Maximum="2" Value="{Binding Brightness}" />
 
                                 <TextBlock Foreground="{StaticResource TextBrush}" Grid.Column="2" Text="{Binding Brightness, Converter={StaticResource ResourceKey=floatToPercentConverter}}" VerticalAlignment="Center"/>
                             </Grid>
