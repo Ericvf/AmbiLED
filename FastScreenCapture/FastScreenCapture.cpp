@@ -251,13 +251,13 @@ HRESULT InitResources() {
 	return hr;
 }
 
-HRESULT CaptureScreen(byte* imageData, float brightness, bool sbs, bool hou) {
+HRESULT CaptureScreen(byte* imageData, float brightness, float saturation, bool sbs, bool hou) {
 	if (!isInitialized)
 		return -1;
 
 	IDXGIResource* DesktopResource = nullptr;
 	DXGI_OUTDUPL_FRAME_INFO FrameInfo;
-	HRESULT hr = outputDuplication->AcquireNextFrame(5, &FrameInfo, &DesktopResource);
+	HRESULT hr = outputDuplication->AcquireNextFrame(16, &FrameInfo, &DesktopResource);
 
 	if (hr == DXGI_ERROR_WAIT_TIMEOUT)
 		return hr;
@@ -290,6 +290,7 @@ HRESULT CaptureScreen(byte* imageData, float brightness, bool sbs, bool hou) {
 	constantBufferData.isSBS = sbs ? 1.0f : 0.0f;
 	constantBufferData.isHOU = hou ? 1.0f : 0.0f;
 	constantBufferData.brightness = brightness;
+	constantBufferData.saturation = saturation;
 	deviceContext->UpdateSubresource(
 		ConstantBuffer,
 		0,

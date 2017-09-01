@@ -59,6 +59,7 @@ namespace Ambiled.Core
             captureService = FastScreenCaptureService.GetInstance();
             captureService.Captured += Service_Captured;
             captureService.Brightness = ViewModel.Brightness;
+            captureService.Saturation = ViewModel.Saturation;
             captureService.IsSBS = ViewModel.Is3DSBS;
             captureService.IsHOU = ViewModel.Is3DOU;
             captureService.Start(screen, width, height);
@@ -66,6 +67,7 @@ namespace Ambiled.Core
 
         private void Service_Captured(object sender, EventArgs e)
         {
+            captureService.Saturation = ViewModel.Saturation;
             captureService.Brightness = ViewModel.Brightness;
             captureService.IsSBS = ViewModel.Is3DSBS;
             captureService.IsHOU = ViewModel.Is3DOU;
@@ -188,8 +190,8 @@ namespace Ambiled.Core
                     }
 
                     hslColor.hue += (int)(ViewModel.Hue * 240);
-                  //  hslColor.luminosity = (int)(ViewModel.Brightness * hslColor.luminosity);
-                    hslColor.saturation = (int)(ViewModel.Saturation * hslColor.saturation);
+                    //  hslColor.luminosity = (int)(ViewModel.Brightness * hslColor.luminosity);
+                    //hslColor.saturation = (int)(ViewModel.Saturation * hslColor.saturation);
 
                     rgbColor = HLSColor.ColorFromHLS(hslColor.hue, hslColor.luminosity, hslColor.saturation);
                     postProcessedBuffer[offset + 3] = 255;

@@ -11,6 +11,7 @@ cbuffer PS_CONSTANT_BUFFER : register(b0)
 	float isSBS;
 	float isHOU;
 	float brightness;
+	float saturation;
 };
 
 Texture2D captureTexture : register( t0 );
@@ -22,6 +23,15 @@ struct PS_INPUT
     float2 Tex : TEXCOORD;
 };
 
+// https://github.com/AnalyticalGraphicsInc/cesium/blob/master/Source/Shaders/Builtin/Functions/saturation.glsl
+float3 ps_saturation(float3 rgb, float adjustment)
+{
+	// Algorithm from Chapter 16 of OpenGL Shading Language
+	const float3 W = float3(0.2125, 0.7154, 0.0721);
+	float3 intensity = dot(rgb, W);
+	return lerp(intensity, rgb, adjustment);
+}
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -32,6 +42,8 @@ float4 PS(PS_INPUT input) : SV_Target
 
 	float4 color = captureTexture.Sample(linearSampler, input.Tex);
 	color.rgb *= brightness;
-	
+	color.rgb = ps_saturation(color.rgb, saturation);
+
 	return color;
 } 
+

@@ -16,7 +16,7 @@ namespace Ambiled.Core
             public static extern void Clean();
 
             [DllImport("FastScreenCapture.dll", CallingConvention = CallingConvention.Cdecl)]
-            public static extern int CaptureScreen(byte[] imageData, float brightness, bool sbs, bool hou);
+            public static extern int CaptureScreen(byte[] imageData, float brightness, float saturation, bool sbs, bool hou);
         }
 
         private static FastScreenCaptureService instance;
@@ -65,6 +65,15 @@ namespace Ambiled.Core
             }
         }
 
+        private float saturation = 1f;
+        public float Saturation
+        {
+            set
+            {
+                saturation = Math.Max(0, Math.Min(2f, value));
+            }
+        }
+
         public byte[] GetBuffer => buffer;
 
         public void Start(int outputNum, int width, int height)
@@ -95,7 +104,7 @@ namespace Ambiled.Core
         {
             while (!captureTaskToken.IsCancellationRequested)
             {
-                SafeNativeMethods.CaptureScreen(buffer, brightness, isSBS, isHOU);
+                SafeNativeMethods.CaptureScreen(buffer, brightness, saturation, isSBS, isHOU);
                 Captured?.Invoke(this, null);
             }
         }
